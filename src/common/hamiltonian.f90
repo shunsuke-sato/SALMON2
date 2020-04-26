@@ -348,6 +348,8 @@ contains
         ie(iplane) = ie(iplane) - 4
       end if
     end do
+    ibs(:) = mg%is(:)
+    ibe(:) = mg%ie(:)
 
 ! phase 1. pack halo region
     call timer_begin(LOG_UHPSI_OVL_PHASE1)
@@ -404,78 +406,28 @@ contains
     call update_overlap_complex8(srg, mg, tpsi%zwf, srg_unpack)
     call timer_end  (LOG_UHPSI_OVL_PHASE3)
 
-    is(:) = mg%is(:)
-    ie(:) = mg%ie(:)
 ! phase 4. computation with halo region
     call timer_begin(LOG_UHPSI_OVL_PHASE4)
 !$omp parallel default(none) &
-!$omp          firstprivate(is,ie) &
-!$omp          private(io,ispin,iplane,igs,ige,ibx,iby,ibz,ibs,ibe) &
-!$omp          shared(is_divided,ik,im,io_s,io_e,nspin,mg,tpsi,htpsi,V_local,k_lap0,stencil,k_nabt,srg,modx,mody,modz) &
+!$omp          private(io,ispin,igs,ige,ibx,iby,ibz) &
+!$omp          shared(ibs,ibe,ik,im,io_s,io_e,nspin,mg,tpsi,htpsi,V_local,k_lap0,stencil,k_nabt,srg,modx,mody,modz) &
 !$omp          shared(optimized_stencil_is_callable)
-    do iplane=1,6
-
-      if (.not. is_divided((iplane+1)/2)) cycle
-
-      ibs(:) = is(:)
-      ibe(:) = ie(:)
-      select case(iplane)
-        case(1) ! update X (up)
-          ibs(1) = mg%ie(1) - 4 + 1
-          ibe(1) = mg%ie(1)
-        case(2) ! update X (down)
-          ibs(1) = mg%is(1)
-          ibe(1) = mg%is(1) + 4 - 1
-        case(3) ! update Y (up)
-          ibs(2) = mg%ie(2) - 4 + 1
-          ibe(2) = mg%ie(2)
-        case(4) ! update Y (down)
-          ibs(2) = mg%is(2)
-          ibe(2) = mg%is(2) + 4 - 1
-        case(5) ! update Z (up)
-          ibs(3) = mg%ie(3) - 4 + 1
-          ibe(3) = mg%ie(3)
-        case(6) ! update Z (down)
-          ibs(3) = mg%is(3)
-          ibe(3) = mg%is(3) + 4 - 1
-      end select
-
-      select case(iplane)
-        case(2)
-          is(1) = is(1) + 4
-          ie(1) = ie(1) - 4
-        case(4)
-          is(2) = is(2) + 4
-          ie(2) = ie(2) - 4
-      end select
-
 !$omp do collapse(4) schedule(dynamic,1)
-      do io=io_s,io_e
-      do ispin=1,Nspin
-      do ibz=ibs(3),ibe(3),nzblk
-      do iby=ibs(2),ibe(2),nyblk
-        igs(3) = ibz ; ige(3) = min(ibz + nzblk - 1, ibe(3))
-        igs(2) = iby ; ige(2) = min(iby + nyblk - 1, ibe(2))
-        igs(1) = ibs(1) ; ige(1) = ibe(1)
-#ifdef USE_OPT_EXPLICIT_VECTORIZATION
-        if (optimized_stencil_is_callable) then
-          call zstencil_tuned_seq(mg%is_array,mg%ie_array,mg%is,mg%ie,modx,mody,modz,igs,ige &
-                                 ,tpsi%zwf(:,:,:,ispin,io,ik,im),htpsi%zwf(:,:,:,ispin,io,ik,im) &
-                                 ,V_local(ispin)%f,k_lap0,stencil%coef_lap,k_nabt)
-        else
-#endif
-          call zstencil_typical_seq(mg%is_array,mg%ie_array,mg%is,mg%ie,mg%idx,mg%idy,mg%idz,igs,ige &
+    do io=io_s,io_e
+    do ispin=1,Nspin
+    do ibz=ibs(3),ibe(3),nzblk
+    do iby=ibs(2),ibe(2),nyblk
+      igs(3) = ibz ; ige(3) = min(ibz + nzblk - 1, ibe(3))
+      igs(2) = iby ; ige(2) = min(iby + nyblk - 1, ibe(2))
+      igs(1) = ibs(1) ; ige(1) = ibe(1)
+      call zstencil_typical_rem_seq(mg%is_array,mg%ie_array,mg%is,mg%ie,mg%idx,mg%idy,mg%idz,igs,ige &
                                    ,tpsi%zwf(:,:,:,ispin,io,ik,im),htpsi%zwf(:,:,:,ispin,io,ik,im) &
                                    ,V_local(ispin)%f,k_lap0,stencil%coef_lap,k_nabt)
-#ifdef USE_OPT_EXPLICIT_VECTORIZATION
-        end if
-#endif
-      end do
-      end do
-      end do
-      end do
-!$omp end do nowait
     end do
+    end do
+    end do
+    end do
+!$omp end do
 !$omp end parallel
     call timer_end  (LOG_UHPSI_OVL_PHASE4)
   end subroutine zstencil_overlapped
