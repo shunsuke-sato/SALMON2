@@ -113,7 +113,7 @@ subroutine zstencil_microAc_typical_rem_seq(is_array,ie_array,is,ie,idx,idy,idz,
   complex(8) :: w(3),v,psi0
   integer    :: irem(3)
 
-  irem(:) = is(:) - is_array(:) + 1
+  irem(:) = is(:) - is_array(:)
 
   do iz=igs(3),ige(3)
   do iy=igs(2),ige(2)

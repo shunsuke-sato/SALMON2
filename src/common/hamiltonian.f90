@@ -538,7 +538,7 @@ contains
     end do
     end do
     end do
-!$omp end do
+!$omp end do nowait
 !$omp end parallel
     call timer_end  (LOG_UHPSI_OVL_PHASE4)
   end subroutine zstencil_microac_overlapped

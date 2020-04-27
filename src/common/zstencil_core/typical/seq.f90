@@ -164,7 +164,7 @@ subroutine zstencil_typical_rem_seq(is_array,ie_array,is,ie,idx,idy,idz,igs,ige 
 #define DY(dt) ix,idy(iy+(dt)),iz
 #define DZ(dt) ix,iy,idz(iz+(dt))
 
-  irem(:) = is(:) - is_array(:) + 1
+  irem(:) = is(:) - is_array(:)
 
   do iz=igs(3),ige(3)
   do iy=igs(2),ige(2)
