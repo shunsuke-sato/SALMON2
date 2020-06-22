@@ -463,7 +463,8 @@ contains
       & yn_set_ini_velocity, &
       & file_ini_velocity, &
       & thermostat_tau, &
-      & yn_stop_system_momt
+      & yn_stop_system_momt, &
+      & yn_center_of_mass_correction
 
     namelist/group_fundamental/ &  !remove later
       & iwrite_projection, &       !remove later
@@ -763,6 +764,7 @@ contains
     file_ini_velocity     = 'none'
     thermostat_tau        =  41.34d0/utime_to_au  !=1[fs]: test value
     yn_stop_system_momt   = 'n'
+    yn_center_of_mass_correction = 'n'
 !! == default for &group_fundamental
     iwrite_projection      = 0
     itwproj                = -1
@@ -1195,6 +1197,7 @@ contains
     call comm_bcast(thermostat_tau         ,nproc_group_global)
     thermostat_tau = thermostat_tau * utime_to_au
     call comm_bcast(yn_stop_system_momt    ,nproc_group_global)
+    call comm_bcast(yn_center_of_mass_correction    ,nproc_group_global)
 !! == bcast for &group_fundamental
     call comm_bcast(iwrite_projection     ,nproc_group_global)
     call comm_bcast(itwproj               ,nproc_group_global)
@@ -1930,6 +1933,7 @@ contains
       write(fh_variables_log, '("#",4X,A,"=",A)') 'file_ini_velocity', trim(file_ini_velocity)
       write(fh_variables_log, '("#",4X,A,"=",ES12.5)') 'thermostat_tau', thermostat_tau
       write(fh_variables_log, '("#",4X,A,"=",A)') 'yn_stop_system_momt', yn_stop_system_momt
+      write(fh_variables_log, '("#",4X,A,"=",A)') 'yn_center_of_mass_correction', yn_center_of_mass_correction
 
 !(remove later)
 !      if(inml_group_fundamental >0)ierr_nml = ierr_nml +1
@@ -2031,6 +2035,7 @@ contains
     call yn_argument_check(yn_out_tm)
     call yn_argument_check(yn_set_ini_velocity)
     call yn_argument_check(yn_stop_system_momt)
+    call yn_argument_check(yn_center_of_mass_correction)
     call yn_argument_check(yn_want_stencil_hand_vectorization)
     call yn_argument_check(yn_want_communication_overlapping)
 

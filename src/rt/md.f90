@@ -58,6 +58,9 @@ subroutine init_md(system,md)
      call restart_Velocity(system)
   end if
 
+  velocity_com = 0d0
+  force_com = 0d0
+
   !if(use_ms_maxwell == 'y' .and. use_potential_model=='n') then
   !   if(nproc_size_global.lt.nmacro) then
   !      write(*,*) "Error: "
@@ -286,6 +289,10 @@ subroutine time_evolution_step_md_part1(itt,system,md)
      call apply_nose_hoover_velocity(system,md,dt_h)
   endif
 
+  if(yn_center_of_mass_correction=='y')then
+    mass_au = umass * sum(system%Mass(Kion(1:natom)))
+    system%velocity_com(:) = system%velocity_com(:) + system%force_com(:)/mass_au*dt_h
+  end if
 
   !update ion velocity with dt/2
 !$omp parallel do private(iatom,mass_au)
@@ -399,6 +406,10 @@ subroutine time_evolution_step_md_part2(system,md)
      Ework_tmp = Ework_tmp - sum(aforce(:,iatom)*dR(:,iatom))
   enddo
   !$omp end parallel do
+  if(yn_center_of_mass_correction=='y')then
+    mass_au = umass * sum(system%Mass(Kion(1:natom)))
+    system%velocity_com(:) = system%velocity_com(:) + system%force_com(:)/mass_au*dt_h
+  end if
   md%E_work = md%E_work + Ework_tmp
 
   !NHC act on velocity with dt/2

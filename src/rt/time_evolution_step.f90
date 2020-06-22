@@ -118,6 +118,9 @@ SUBROUTINE time_evolution_step(Mit,itotNtime,itt,lg,mg,system,rt,info,stencil,xc
   case(3)
     if(.not.singlescale%flag_use) then
       system%vec_Ac(1:3) = rt%Ac_ext(1:3,itt) + rt%Ac_ind(1:3,itt)
+      if(yn_center_of_mass_correction=='y')then
+        system%vec_Ac(1:3) = system%vec_Ac(1:3) - system%velocity_com(1:3)
+      end if
       system%vec_E(1:3) = -((rt%Ac_ext(1:3,itt) + rt%Ac_ind(1:3,itt))-(rt%Ac_ext(1:3,itt-1) + rt%Ac_ind(1:3,itt-1)))/dt
       system%vec_Ac_ext(1:3) = rt%Ac_ext(1:3,itt) 
       system%vec_E_ext(1:3) = -(rt%Ac_ext(1:3,itt) - rt%Ac_ext(1:3,itt-1))/dt
@@ -460,6 +463,9 @@ contains
   case(3)
     if(.not.singlescale%flag_use) then
       system%vec_Ac(1:3) = rt%Ac_ext(1:3,itt+1) + 2d0*rt%Ac_ind(1:3,itt) - rt%Ac_ind(1:3,itt-1)
+      if(yn_center_of_mass_correction=='y')then
+        system%vec_Ac(1:3) = system%vec_Ac(1:3) - system%velocity_com(1:3)
+      end if
       system%vec_Ac_ext(1:3) = rt%Ac_ext(1:3,itt+1)
       call update_kvector_nonlocalpt(info%ik_s,info%ik_e,system,ppg)
     end if

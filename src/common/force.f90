@@ -60,11 +60,13 @@ contains
     complex(8),parameter :: zero=(0.0d0,0.0d0)
     complex(8),allocatable :: zF_tmp(:,:)
     integer :: Norb,iorb,ilocal
+    real(8) :: mass_sum
 
     call timer_begin(LOG_CALC_ION_FORCE)
 
     nion = system%nion
     if(.not.allocated(system%Force)) allocate(system%Force(3,nion))
+    if(.not.allocated(system%Force_com)) allocate(system%Force_com(3))
     allocate( F_tmp(3,nion), F_sum(3,nion) )
     if( PLUS_U_ON ) then
       allocate( zF_tmp(3,nion) )
@@ -343,6 +345,17 @@ contains
       do ia=1,nion
         call sym_vector_xyz( system%Force(:,ia) )
       end do
+    end if
+
+    if(yn_center_of_mass_correction=='y')then
+      mass_sum = sum(system%Mass(Kion(1:nion)))
+      system%force_com(1) = sum(system%force(1,:))
+      system%force_com(2) = sum(system%force(2,:))
+      system%force_com(3) = sum(system%force(3,:))
+!$omp parallel do private(iatom)
+      do iatom=1,nion
+        system%Force(:,ia) = system%Force(:,ia) -system%Mass(Kion(ia))/mass_sum*system%force_com(:)
+      end if
     end if
 
     if(allocated(tpsi%rwf)) deallocate(tpsi%zwf)

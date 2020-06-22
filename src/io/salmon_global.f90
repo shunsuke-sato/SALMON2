@@ -305,6 +305,7 @@ module salmon_global
   character(256) :: file_ini_velocity
   real(8)        :: thermostat_tau
   character(1)   :: yn_stop_system_momt
+  character(1)   :: yn_center_of_mass_correction
 
 !! &group_fundamental
   integer        :: iwrite_projection
