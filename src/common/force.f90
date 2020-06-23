@@ -30,7 +30,7 @@ contains
     use sym_vector_sub, only: sym_vector_xyz
     use sym_sub, only: use_symmetry
     use plusU_global, only: PLUS_U_ON, dm_mms_nla, U_eff
-    use salmon_global, only: kion,cutoff_g,yn_periodic
+    use salmon_global, only: kion,cutoff_g,yn_periodic,yn_center_of_mass_correction
     use code_optimization, only: force_omp_mode
     use timer
     implicit none
@@ -66,7 +66,6 @@ contains
 
     nion = system%nion
     if(.not.allocated(system%Force)) allocate(system%Force(3,nion))
-    if(.not.allocated(system%Force_com)) allocate(system%Force_com(3))
     allocate( F_tmp(3,nion), F_sum(3,nion) )
     if( PLUS_U_ON ) then
       allocate( zF_tmp(3,nion) )
@@ -352,10 +351,10 @@ contains
       system%force_com(1) = sum(system%force(1,:))
       system%force_com(2) = sum(system%force(2,:))
       system%force_com(3) = sum(system%force(3,:))
-!$omp parallel do private(iatom)
-      do iatom=1,nion
+!$omp parallel do private(ia)
+      do ia=1,nion
         system%Force(:,ia) = system%Force(:,ia) -system%Mass(Kion(ia))/mass_sum*system%force_com(:)
-      end if
+      end do
     end if
 
     if(allocated(tpsi%rwf)) deallocate(tpsi%zwf)

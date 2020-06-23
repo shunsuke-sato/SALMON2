@@ -58,8 +58,8 @@ subroutine init_md(system,md)
      call restart_Velocity(system)
   end if
 
-  velocity_com = 0d0
-  force_com = 0d0
+  system%velocity_com = 0d0
+  system%force_com = 0d0
 
   !if(use_ms_maxwell == 'y' .and. use_potential_model=='n') then
   !   if(nproc_size_global.lt.nmacro) then
@@ -270,7 +270,7 @@ end subroutine cal_Tion_Temperature_ion
 
 subroutine time_evolution_step_md_part1(itt,system,md)
   use structures, only: s_dft_system, s_md
-  use salmon_global, only: natom,Kion,dt, ensemble,thermostat  !, Rion
+  use salmon_global, only: natom,Kion,dt, ensemble,thermostat,yn_center_of_mass_correction  !, Rion
   use const, only: umass,hartree2J,kB
   use inputoutput, only: step_velocity_scaling
   use timer
@@ -381,7 +381,8 @@ end subroutine
 
 subroutine time_evolution_step_md_part2(system,md)
   use structures, only: s_dft_system, s_md
-  use salmon_global, only: natom,Kion,dt,yn_stop_system_momt,ensemble,thermostat
+  use salmon_global, only: natom,Kion,dt,yn_stop_system_momt,ensemble,thermostat &
+    ,yn_center_of_mass_correction
   use const, only: umass,hartree2J,kB
   use timer
   implicit none
