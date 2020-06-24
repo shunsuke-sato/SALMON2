@@ -250,7 +250,7 @@ end subroutine remove_system_momentum
 
 subroutine cal_Tion_Temperature_ion(Ene_ion,Temp_ion,system)
   use structures, only: s_dft_system
-  use salmon_global, only: natom,Kion
+  use salmon_global, only: natom,Kion,yn_center_of_mass_correction
   use const, only: umass,hartree2J,kB
   implicit none
   type(s_dft_system) :: system
