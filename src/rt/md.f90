@@ -255,12 +255,19 @@ subroutine cal_Tion_Temperature_ion(Ene_ion,Temp_ion,system)
   implicit none
   type(s_dft_system) :: system
   integer :: ia
-  real(8) :: mass_au, Ene_ion,Temp_ion
+  real(8) :: mass_au, Ene_ion,Temp_ion, v_com(3)
+
+  if(yn_center_of_mass_correction=='y')then
+    v_com(:) = system%velocity_com(:)
+  else
+    v_com(:) = 0d0
+  end if
 
   Ene_ion = 0.d0
+
   do ia=1,natom
-     mass_au = umass * system%Mass(Kion(ia))
-     Ene_ion = Ene_ion + 0.5d0 * mass_au * sum(system%Velocity(:,ia)**2d0)
+    mass_au = umass * system%Mass(Kion(ia))
+    Ene_ion = Ene_ion + 0.5d0 * mass_au * sum((system%Velocity(:,ia)+v_com(:))**2)
   enddo
   Temp_ion = Ene_ion * 2d0 / (3d0*natom) / (kB/hartree2J)
 
