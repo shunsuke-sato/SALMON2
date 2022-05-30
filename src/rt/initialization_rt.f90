@@ -100,6 +100,7 @@ subroutine initialization_rt( Mit, system, energy, ewald, rt, md, &
   real(8) :: curr_e_tmp(3,2), curr_i_tmp(3)
   integer :: itt
   logical :: rion_update
+  integer :: itmp
   
   call timer_begin(LOG_INIT_RT)
 
@@ -497,10 +498,20 @@ subroutine initialization_rt( Mit, system, energy, ewald, rt, md, &
        call write_dns_ac_je(info,mg,system,rho%f,singlescale,itt,"new")
        call write_dns_ac_je(info,mg,system,rho%f,singlescale,itt,"bin")
     end if
-    
+  
   else if(yn_out_micro_je=='y') then
   ! not single-scale but output microscopic current rt%j_e
     call allocate_vector(mg,rt%j_e)
+  end if
+
+  if(yn_transition_current_density=='y')then
+    if(yn_out_micro_je/='y' .and. .not.singlescale%flag_use)then
+      call allocate_vector(mg,rt%j_e)
+    end if
+    allocate(rt%zj_e_tcd(nmax_omega_tcd))
+    do itmp = 1, nmax_omega_tcd
+      call allocate_zvector(mg,rt%zj_e_tcd(itmp))
+    end do
   end if
 
   !-------------------------------------------------- Time evolution

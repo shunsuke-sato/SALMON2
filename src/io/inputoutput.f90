@@ -481,7 +481,9 @@ contains
       & yn_lr_w0_correction, &
       & out_magnetization_step, &
       & yn_out_perflog, &
-      & format_perflog
+      & format_perflog, &
+      & yn_transition_current_density, &
+      & omega_para_tcd
 
     namelist/poisson/ &
       & layout_multipole, &
@@ -843,6 +845,9 @@ contains
 
     yn_out_perflog      = 'y'
     format_perflog      = 'stdout'
+
+    yn_transition_current_density = 'n'
+    omega_para_tcd(:) = 0d0
 
 !! == default for &poisson
     layout_multipole  = 3
@@ -1375,6 +1380,8 @@ contains
     call comm_bcast(out_magnetization_step ,nproc_group_global)
     call comm_bcast(yn_out_perflog      ,nproc_group_global)
     call comm_bcast(format_perflog      ,nproc_group_global)
+    call comm_bcast(yn_transition_current_density    ,nproc_group_global)
+    call comm_bcast(omega_para_tcd      ,nproc_group_global)
 
 !! == bcast for &poisson
     call comm_bcast(layout_multipole  ,nproc_group_global)
@@ -2209,6 +2216,9 @@ contains
       write(fh_variables_log, '("#",4X,A,"=",I6)') 'out_magnetization_step', out_magnetization_step
       write(fh_variables_log, '("#",4X,A,"=",A)') 'yn_out_perflog', yn_out_perflog
       write(fh_variables_log, '("#",4X,A,"=",A)') 'format_perflog', format_perflog
+      write(fh_variables_log, '("#",4X,A,"=",A)') 'yn_transition_current_density' &
+           , yn_transition_current_density
+      write(fh_variables_log, '("#",4X,A,"=",99ES12.5)') 'omega_para_tcd', omega_para_tcd(:)
 
       if(inml_poisson >0)ierr_nml = ierr_nml +1
       write(fh_variables_log, '("#namelist: ",A,", status=",I3)') 'poisson', inml_poisson

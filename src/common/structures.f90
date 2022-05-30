@@ -42,6 +42,11 @@ module structures
     real(8),allocatable :: v(:,:,:,:) ! v(1:3,x,y,z)
   end type s_vector
 
+! vector field
+  type s_zvector
+     complex(8),allocatable :: zv(:,:,:,:) ! v(1:3,x,y,z)
+  end type s_zvector
+
   type s_dft_system
     logical :: if_real_orbital
     integer :: ngrid,nspin,no,nk,nion ! # of r-grid points, spin indices, orbitals, k points, and ions
@@ -474,6 +479,7 @@ module structures
     type(s_scalar),allocatable :: rho0_s(:) ! =rho_s(1:nspin) @ t=0 (GS)
     type(s_scalar) :: vonf
     type(s_vector) :: j_e ! microscopic electron number current density
+    type(s_zvector),allocatable :: zj_e_tcd(:) ! transition current dneisty
     ! for projection_option
     type(s_dft_system) :: system_gs
     type(s_parallel_info) :: info_gs
@@ -578,6 +584,22 @@ contains
     end do
     end do
   end subroutine allocate_vector
+
+  subroutine allocate_zvector(rg,field)
+    implicit none
+    type(s_rgrid),intent(in) :: rg
+    type(s_zvector)           :: field
+    integer :: ix,iy,iz
+    allocate(field%zv(3,rg%is(1):rg%ie(1),rg%is(2):rg%ie(2),rg%is(3):rg%ie(3)))
+!$omp parallel do collapse(2) private(iz,iy,ix)
+    do iz=rg%is(3),rg%ie(3)
+    do iy=rg%is(2),rg%ie(2)
+    do ix=rg%is(1),rg%ie(1)
+      field%zv(:,ix,iy,iz) = 0d0
+    end do
+    end do
+    end do
+  end subroutine allocate_zvector
 
   subroutine allocate_vector_with_ovlp(rg,field)
     implicit none
