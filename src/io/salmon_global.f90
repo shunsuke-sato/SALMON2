@@ -324,6 +324,9 @@ module salmon_global
   integer        :: out_magnetization_step
   character(1)   :: yn_out_perflog
   character(6)   :: format_perflog ! 'stdout','text','csv'
+  character(1)   :: yn_transition_current_density
+  real(8) :: omega_para_tcd
+
   
 !! &poisson
   integer        :: layout_multipole

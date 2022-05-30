@@ -42,6 +42,11 @@ module structures
     real(8),allocatable :: v(:,:,:,:) ! v(1:3,x,y,z)
   end type s_vector
 
+! vector field
+  type s_zvector
+     complex(8),allocatable :: zv(:,:,:,:) ! v(1:3,x,y,z)
+  end type s_zvector
+
   type s_dft_system
     logical :: if_real_orbital
     integer :: ngrid,nspin,no,nk,nion ! # of r-grid points, spin indices, orbitals, k points, and ions
@@ -474,6 +479,7 @@ module structures
     type(s_scalar),allocatable :: rho0_s(:) ! =rho_s(1:nspin) @ t=0 (GS)
     type(s_scalar) :: vonf
     type(s_vector) :: j_e ! microscopic electron number current density
+    type(s_zvector) :: zj_e_tcd ! transition current dneisty
     ! for projection_option
     type(s_dft_system) :: system_gs
     type(s_parallel_info) :: info_gs
