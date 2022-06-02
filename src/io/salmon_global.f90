@@ -324,8 +324,9 @@ module salmon_global
   integer        :: out_magnetization_step
   character(1)   :: yn_out_perflog
   character(6)   :: format_perflog ! 'stdout','text','csv'
+  integer,parameter :: nmax_omega_tcd=5 ! transition current density analysis
   character(1)   :: yn_transition_current_density
-  real(8) :: omega_para_tcd
+  real(8) :: omega_para_tcd(nmax_omega_tcd)
 
   
 !! &poisson

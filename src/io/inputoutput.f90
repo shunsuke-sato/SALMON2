@@ -847,7 +847,7 @@ contains
     format_perflog      = 'stdout'
 
     yn_transition_current_density = 'n'
-    omega_para_tcd = 0d0
+    omega_para_tcd(:) = 0d0
 
 !! == default for &poisson
     layout_multipole  = 3
@@ -2218,7 +2218,7 @@ contains
       write(fh_variables_log, '("#",4X,A,"=",A)') 'format_perflog', format_perflog
       write(fh_variables_log, '("#",4X,A,"=",A)') 'yn_transition_current_density' &
            , yn_transition_current_density
-      write(fh_variables_log, '("#",4X,A,"=",ES12.5)') 'omega_para_tcd', omega_para_tcd
+      write(fh_variables_log, '("#",4X,A,"=",99ES12.5)') 'omega_para_tcd', omega_para_tcd(:)
 
       if(inml_poisson >0)ierr_nml = ierr_nml +1
       write(fh_variables_log, '("#namelist: ",A,", status=",I3)') 'poisson', inml_poisson

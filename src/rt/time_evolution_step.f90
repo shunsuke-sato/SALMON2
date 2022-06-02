@@ -173,7 +173,8 @@ SUBROUTINE time_evolution_step(Mit,itotNtime,itt,lg,mg,system,rt,info,stencil,xc
   
   call timer_end(LOG_CALC_RHO)
   
-  if(singlescale%flag_use .or. yn_out_micro_je=='y') then
+  if(singlescale%flag_use .or. yn_out_micro_je=='y' &
+       .or. yn_transition_current_density=='y') then
     if(info%if_divide_rspace) then
       call update_overlap_complex8(srg, mg, spsi_out%zwf)
     end if
