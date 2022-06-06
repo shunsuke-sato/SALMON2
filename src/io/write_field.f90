@@ -690,4 +690,56 @@ end subroutine write_psi
 
 !===================================================================================================================================
 
+subroutine write_transition_current_density(lg,mg,info,zj_tcd)
+  use parallelization, only: nproc_id_global
+  use communication, only: comm_is_root,comm_summation
+  use structures
+  implicit none
+  type(s_rgrid)          ,intent(in) :: lg
+  type(s_rgrid)          ,intent(in) :: mg
+  type(s_parallel_info)  ,intent(in) :: info
+  type(s_zvector)        ,intent(in) :: zj_tcd(1:nmax_omega_tcd)
+  integer :: iw, ix, iy, iz
+  complex(8) :: allocatable :: zwrk1(:,:,:,:,:),zwrk2(:,:,:,:,:)
+  character(256) :: filename
+
+  allocate(zwrk1(lg%is(1):lg%ie(1),lg%is(2):lg%ie(2),lg%is(3):lg%ie(3),3,nmax_omega_tcd))
+  allocate(zwrk2(lg%is(1):lg%ie(1),lg%is(2):lg%ie(2),lg%is(3):lg%ie(3),3,nmax_omega_tcd))
+  zwrk1 = 0d0; zwrk2 = 0d0
+
+  do iw = 1, nmax_omega_tcd
+    do iz=mg%is(3),mg%ie(3)
+    do iy=mg%is(2),mg%ie(2)
+    do ix=mg%is(1),mg%ie(1)
+      zwrk1(ix,iy,iz,1:3,iw) = zj_tcd(iw)%zv(1:3,ix,iy,iz)
+   end do
+   end do
+   end do
+  end do
+
+  call comm_summation(zwrk1,zwrk2,lg%num(1)*lg%num(2)*lg%num(3)*3,info%icomm_r)
+
+  if(comm_is_root(nproc_id_global))then
+    filename = "transition_je.out"
+    open(103,file=filename)
+    write(103,"(A, 3I8)")"# n1, n2, n3 =",lg%ie(1)-lg%is(1)+1&
+                                         ,lg%ie(2)-lg%is(2)+1&
+                                         ,lg%ie(3)-lg%is(3)+1
+    write(103,"(A)")"# i1, i2, i3,  zje_w(i1,i2,i3,1:3,1:nmax_omega_tcd)"
+
+    do ix=lg%is(1),lg%ie(1)
+    do iy=lg%is(2),lg%ie(2)
+    do iz=lg%is(3),lg%ie(3)
+      write(103,"(3I7,999e26.16e3)")ix,iy,iz,zwrk2(ix,iy,iz,1:3,1:nmax_omega_tcd)
+    end do
+    end do
+    end do
+
+    close(103)
+  end if
+  
+end subroutine write_transition_current_density
+
+!===================================================================================================================================
+
 end module writefield

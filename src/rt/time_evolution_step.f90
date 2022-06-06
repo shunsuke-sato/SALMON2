@@ -180,6 +180,9 @@ SUBROUTINE time_evolution_step(Mit,itotNtime,itt,lg,mg,system,rt,info,stencil,xc
     end if
     spsi_out%update_zwf_overlap = .true.
     call calc_microscopic_current(system,mg,stencil,info,spsi_out,rt%j_e)
+    if(yn_transition_current_density=='y')then
+       call integrate_transition_current_density(itt,nt,rt%j_e,rt%zj_e_tcd)
+    end if
   end if
 
   if(yn_fix_func=='n') then
@@ -339,6 +342,10 @@ SUBROUTINE time_evolution_step(Mit,itotNtime,itt,lg,mg,system,rt,info,stencil,xc
   
   if(yn_spinorbit=='y' .and. (itt==1.or.itt==itotNtime.or.mod(itt,out_magnetization_step)==0)) then
     call write_magnetization(itt,ofl,system,mg,info,spsi_out)
+  end if
+
+  if(yn_transition_current_density=='y' .and. itt==nt)then
+     call write_transition_current_density(lg,mg,info,rt%zj_e_tcd)
   end if
   
   call timer_end(LOG_WRITE_RT_INFOS)
