@@ -693,6 +693,7 @@ end subroutine write_psi
 subroutine write_transition_current_density(lg,mg,info,zj_tcd)
   use parallelization, only: nproc_id_global
   use communication, only: comm_is_root,comm_summation
+  use salmon_global, only: nmax_omega_tcd
   use structures
   implicit none
   type(s_rgrid)          ,intent(in) :: lg
@@ -700,7 +701,7 @@ subroutine write_transition_current_density(lg,mg,info,zj_tcd)
   type(s_parallel_info)  ,intent(in) :: info
   type(s_zvector)        ,intent(in) :: zj_tcd(1:nmax_omega_tcd)
   integer :: iw, ix, iy, iz
-  complex(8) :: allocatable :: zwrk1(:,:,:,:,:),zwrk2(:,:,:,:,:)
+  complex(8),allocatable :: zwrk1(:,:,:,:,:),zwrk2(:,:,:,:,:)
   character(256) :: filename
 
   allocate(zwrk1(lg%is(1):lg%ie(1),lg%is(2):lg%ie(2),lg%is(3):lg%ie(3),3,nmax_omega_tcd))

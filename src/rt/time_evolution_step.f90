@@ -21,7 +21,7 @@ SUBROUTINE time_evolution_step(Mit,itotNtime,itt,lg,mg,system,rt,info,stencil,xc
 &   ewald,md,ofl,poisson,singlescale)
   use structures
   use communication, only: comm_is_root, comm_summation, comm_bcast
-  use density_matrix, only: calc_density, calc_current, calc_microscopic_current
+  use density_matrix, only: calc_density, calc_current, calc_microscopic_current, integrate_transition_current_density
   use writefield
   use timer
   use salmon_global

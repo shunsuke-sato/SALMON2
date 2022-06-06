@@ -500,9 +500,10 @@ subroutine initialization_rt( Mit, system, energy, ewald, rt, md, &
     end if
 
     if(yn_transition_current_density=='y')then
-       do itmp = 1, nmax_omega_tcd
-          call allocate_zvector(mg,rt%zj_e_tcd(itmp))
-       end do
+      allocate(rt%zj_e_tcd(nmax_omega_tcd))
+      do itmp = 1, nmax_omega_tcd
+        call allocate_zvector(mg,rt%zj_e_tcd(itmp))
+      end do
     end if
     
   else if(yn_out_micro_je=='y') then

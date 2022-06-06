@@ -797,6 +797,8 @@ contains
   subroutine integrate_transition_current_density(it_t,nt_t,curr,zcurr)
     use structures
     use communication, only: comm_summation
+    use salmon_global, only: nmax_omega_tcd, omega_para_tcd, dt
+    use math_constants, only: pi, zi
     implicit none
     integer, intent(in) :: it_t, nt_t
     type(s_vector), intent(in)       :: curr
@@ -812,7 +814,7 @@ contains
     ss = (2d0/nt_t)*sin(pi*xx)**2
 
     do iw = 1, nmax_omega_tcd
-       zcurr(iw)%zv(:,:,:,:,:) = zcurr(iw)%zv(:,:,:,:,:) &
+       zcurr(iw)%zv(:,:,:,:) = zcurr(iw)%zv(:,:,:,:) &
             + ss*exp(zi*omega_para_tcd(iw)*tt)*curr%v(:,:,:,:)
     end do
     
