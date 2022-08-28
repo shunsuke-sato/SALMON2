@@ -718,7 +718,7 @@ subroutine write_transition_current_density(lg,mg,info,zj_tcd)
    end do
   end do
 
-  call comm_summation(zwrk1,zwrk2,lg%num(1)*lg%num(2)*lg%num(3)*3,info%icomm_r)
+  call comm_summation(zwrk1,zwrk2,lg%num(1)*lg%num(2)*lg%num(3)*3*nmax_omega_tcd,info%icomm_r)
 
   if(comm_is_root(nproc_id_global))then
     filename = "transition_je.out"
