@@ -212,6 +212,14 @@ subroutine init_dft_system(lg,system,stencil)
     case(1)
       system%rocc(1:nelec/2,:,1) = 2d0
       if(mod(nelec,2) /=0)system%rocc(nelec/2+1,:,1) = 1d0
+
+      if(nstate_electron /=0)then
+        system%rocc(nstate_electron,:,1) = system%rocc(nstate_electron,:,1) + 1d0
+      end if
+      if(nstate_hole /=0)then
+        system%rocc(nstate_hole,:,1) = system%rocc(nstate_hole,:,1) - 1d0
+      end if
+
     case(2)
       if ( nelec > 0 ) then
         if ( mod(nelec,2) == 0 ) then

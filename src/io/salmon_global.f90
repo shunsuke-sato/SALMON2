@@ -93,6 +93,8 @@ module salmon_global
   real(8)        :: al(3)
   real(8)        :: al_vec1(3),al_vec2(3),al_vec3(3)
   integer        :: nstate
+  integer        :: nstate_electron
+  integer        :: nstate_hole
   integer        :: nelec
   integer        :: nelec_spin(2)
   real(8)        :: temperature

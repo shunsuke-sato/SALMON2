@@ -250,6 +250,8 @@ contains
       & al, &
       & al_vec1,al_vec2,al_vec3, &
       & nstate, &
+      & nstate_electron, &
+      & nstate_hole, &
       & nelec, &
       & nelec_spin, &
       & temperature, &
@@ -632,6 +634,8 @@ contains
     al_vec2            = 0d0
     al_vec3            = 0d0
     nstate             = 0
+    nstate_electron    = 0
+    nstate_hole        = 0
     nelec              = 0
     nelec_spin (:)     = 0
     temperature        = -1d0
@@ -1103,6 +1107,8 @@ contains
     al_vec2 = al_vec2 * ulength_to_au
     al_vec3 = al_vec3 * ulength_to_au
     call comm_bcast(nstate             ,nproc_group_global)
+    call comm_bcast(nstate_electron    ,nproc_group_global)
+    call comm_bcast(nstate_hole        ,nproc_group_global)
     call comm_bcast(nelec              ,nproc_group_global)
     call comm_bcast(nelec_spin         ,nproc_group_global)
     call comm_bcast(temperature        ,nproc_group_global)
@@ -1931,6 +1937,8 @@ contains
       write(fh_variables_log, '("#",4X,A,"=",3ES12.5)') 'al_vec2(1:3)', al_vec2(1:3)
       write(fh_variables_log, '("#",4X,A,"=",3ES12.5)') 'al_vec3(1:3)', al_vec3(1:3)
       write(fh_variables_log, '("#",4X,A,"=",I4)') 'nstate', nstate
+      write(fh_variables_log, '("#",4X,A,"=",I4)') 'nstate_electron', nstate_electron
+      write(fh_variables_log, '("#",4X,A,"=",I4)') 'nstate_hole', nstate_hole
       write(fh_variables_log, '("#",4X,A,"=",I4)') 'nelec', nelec
       write(fh_variables_log, '("#",4X,A,"=",I4,2x,I4)') 'nelec_spin(1:2)', nelec_spin
       write(fh_variables_log, '("#",4X,A,"=",ES12.5)') 'temperature', temperature
