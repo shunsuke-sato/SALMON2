@@ -95,7 +95,8 @@ end subroutine init_dft
 subroutine init_dft_system(lg,system,stencil)
   use structures
   use lattice
-  use salmon_global, only: al_vec1,al_vec2,al_vec3,al,spin,natom,nelem,nstate,iperiodic,num_kgrid,num_rgrid,dl, &
+  use salmon_global, only: al_vec1,al_vec2,al_vec3,al,spin,natom,nelem,nstate, nstate_electron, nstate_hole, &
+  & iperiodic,num_kgrid,num_rgrid,dl, &
   & nproc_rgrid,Rion,Rion_red,nelec,calc_mode,temperature,nelec_spin,yn_spinorbit, &
   & iflag_atom_coor,ntype_atom_coor_reduced,quiet
   use sym_sub, only: init_sym_sub
