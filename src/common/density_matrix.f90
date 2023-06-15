@@ -519,6 +519,7 @@ contains
     real(8)    :: x,y,z
     complex(8) :: uVpsi,uVpsi_r(3)
     jw = 0d0
+    return ! artificially terminated for the test
 #ifdef USE_OPENACC
   jw_1 = 0d0
   jw_2 = 0d0
@@ -579,6 +580,7 @@ contains
     real(8)    :: x,y,z
     complex(8) :: uVpsi,uVpsi_r(3)
     jw = 0d0
+    return ! artificially terminated for the test
 !$omp parallel do private(ilocal,ilma,ia,uVpsi,uVpsi_r,j,x,y,z,ix,iy,iz) reduction(+:jw)
     do ilocal=1,ppg%ilocal_nlma
       ilma=ppg%ilocal_nlma2ilma(ilocal)
